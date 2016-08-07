@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import serial   # pip install pyserial
@@ -128,6 +128,7 @@ class SDA01A(object):
 def cli_report(my01A):
     """ assemble little report of device """
     assert isinstance(my01A, SDA01A)
+    logging.info("Assembling Report")
     from os import linesep
     r = "<><><><><> " + my01A.t + " (" + my01A.s + ") <><><><><>" + linesep
     r += "Freq: " + str(my01A.getFrequency()) + "mhz, TxPower: " + str(my01A.getTxPower()) + ", Stereo: " + str(my01A.getStereo()) + linesep
@@ -137,6 +138,7 @@ def cli_report(my01A):
 def cli_interactive(my01A):  # experimental
     """ interactive mode - keep screen refreshed? """
     assert isinstance(my01A, SDA01A)
+    logging.info("entering interactive mode")
     import os, sys
     k = ''
     while k.lower() != 'q':
@@ -159,8 +161,8 @@ if __name__ == "__main__":
     parser.add_option('-v', '--verbose', action="store_true", dest="log_verbose", help="talk a bit more")
     parser.add_option('-d', '--debug', action="store_true", dest="log_debug", help="talk a lot more")
 
-    parser.add_option('-D', '--device', action="store", dest="device", default="//./COM8",
-                      help="Serial Port of 01A (//./COM0|/dev/ttyUSB0) [default:%default]")
+    parser.add_option('-D', '--device', action="store", dest="device", default="/dev/ttyUSB0",
+                      help="USB Serial Port of 01A (//./COM0|/dev/ttyUSB0) [default:%default]")
 
     parser.add_option('-p', '--power', action="store", dest="power", help="switch device [on|off]", default=None)
     parser.add_option('-b', '--backlight', action="store", dest="backlight", help="switch backlight [on|off]", default=None)
