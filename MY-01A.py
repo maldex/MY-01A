@@ -26,7 +26,7 @@ class SDA01A(object):
         while not out.startswith('OK'):
             logging.debug('Writing ' + str( data ) )
             self.ser.write(data)
-            while self.ser.inWaiting() < 2: sleep(0.01)  # wait for buffer to be filled
+            while self.ser.inWaiting() < 2: sleep(0.1)  # wait for buffer to be filled
             out = ''
             while self.ser.inWaiting() > 0:
                 out += self.ser.read(1) # read form device byte by byte
