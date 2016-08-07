@@ -1,6 +1,6 @@
 # Utility to configure SDA-01A / CZE-01A / CEA-01A / FU-01A PC Control 1Watt FM Transmitter
 CLI Utility for configuring ???-01A Stereo FM Transmitter devices.
-This is an unofficial and not supported rewrite of the protocol which the -01A Device (which resembles a 'Silicon Labs CP210x USB to UART Bridge' on my WinXP) to the shipped 'SDA-01A PC control.exe'.
+This is an unofficial and not supported rewrite of the protocol which the -01A Device (which resembles a 'Silicon Labs CP210x USB to UART Bridge') to the shipped 'SDA-01A PC control.exe'.
 Use of either this utility or operating such an trasmitter according to local authorities is your own risk.
 
 Usermanual: http://www.108mhz.com/download/SDA-01A%20User%20Manual.pdf
