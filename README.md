@@ -1,1 +1,26 @@
-test
+# Utility to configure SDA-01A / CZE-01A / FU-01A FM Transmitter
+CLI Utility for configuring ???-01A Stereo FM Transmitter devices.
+This is an unofficial and not supported rewrite of the protocol which the -01A Device (which resembles a 'Silicon Labs CP210x USB to UART Bridge' on my WinXP) to the shipped 'SDA-01A PC control.exe'.
+Use of either this utility or operating such an trasmitter according to local authorities is your own risk.
+
+Usermanual: http://www.108mhz.com/download/SDA-01A%20User%20Manual.pdf
+
+Thanks to the folks over at 'HHD Software' for the 'Free Serial Port Monitor' which allowed me to sniff serial communication on Windows.
+
+## requirements
+requires python (2.7isch) and pySerial.
+
+## usage
+```
+# see the help page
+MY-01A.py --help
+
+# be verbose when powering down
+MY-01A.py --debug --device //./COM8 --power off
+
+# the backlight will come to live anyway
+MY-01A.py --verbose --device //./COM8 --backlight on
+
+# lets start the 01A fully
+MY-01A.py --power on --stereo on --freq 99.9 --txpower 3 --linevol 25 --micvol 0
+```
