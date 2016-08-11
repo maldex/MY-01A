@@ -25,7 +25,7 @@ class SDA01A(object):
         out = ''
         while not out.startswith('OK'):
             logging.debug('Writing ' + str( data ) )
-            self.ser.write(data)
+            self.ser.write(bytearray(data))
             while self.ser.inWaiting() < 2: sleep(0.1)  # wait for buffer to be filled
             out = ''
             while self.ser.inWaiting() > 0:
