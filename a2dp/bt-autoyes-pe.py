@@ -16,8 +16,9 @@ prompt =   "\\x1b\[0;94m\[bluetooth\]\\x1b\[0m# "
 
 # prompt = "\\x1b[0;94m"
 
+btctl = 'bluetoothctl'
 
-child = pexpect.spawn('bluetoothctl', echo=True)
+child = pexpect.spawn(btctl, echo=True)
 # child.logfile = sys.stdout
 
 
@@ -50,6 +51,7 @@ logging.info("starting listener loop")
 # [agent] Authorize service 0000110d-0000-1000-8000-00805f9b34fb (yes/no):
 
 def question(before, after):
+    after = after.strip()
     if after.find("Confirm passkey") > 0:  # pairing
         passkey = after.split(' ')[-2]
         logging.info("confirming passkey " + passkey)
@@ -58,12 +60,15 @@ def question(before, after):
         os.system(c)
         print c
 
-    elif after.find("Authorize service") > 0:  # connecting
-        logging.info("Authorizing Service")
+    elif after.find("Authorize service") > 0 :  # connecting
+        logging.info("Authorizing Service    - - - - - -")
         child.send("yes\r")
 
     else:
-        logging.warn("could not decipper")
+        logging.warn("could not decipper - sending yes anyway")
+        pprint(before)
+        pprint(after)
+        child.send("yes\r")
 
 
 def info(before, after):
@@ -112,6 +117,6 @@ while True:
             info(child.before, child.after)
 
 
-    except pexpect.exceptions.TIMEOUT,e:
-        #child.flush()
+    except pexpect.exceptions.TIMEOUT:
+        child.flush()
         pass
