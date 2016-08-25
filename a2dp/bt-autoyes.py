@@ -10,15 +10,10 @@ color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 from pprint import pprint
 
 command = "bluetoothctl"
-#command = "ssh pi@10.83.6.111 " + command
+command = "ssh pi@10.83.6.129 " + command
 prvi = subprocess.Popen(command.split(' '), shell=False,
                         stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                         stderr=subprocess.STDOUT)
-
-for start_cmd in ['agent on', 'discoverable on', 'pairable on', 'power on', 'default-agent']:
-    logging.debug("writing to stdin: " + start_cmd)
-    prvi.stdin.write( start_cmd + os.linesep)
-    sleep(0.25)
 
 while True:  # main loop
     out = ''
@@ -40,3 +35,8 @@ while True:  # main loop
         logging.info('PIN request: writing to stdin: 8306')
         prvi.stdin.write('8306' + os.linesep)
 
+    if out.startswith('[NEW] Controller '):
+        for start_cmd in ['agent on', 'discoverable on', 'pairable on', 'power on', 'default-agent']:
+            logging.info("new controller: writing to stdin: " + start_cmd)
+            prvi.stdin.write(start_cmd + os.linesep)
+            sleep(0.25)
