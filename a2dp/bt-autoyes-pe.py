@@ -68,8 +68,17 @@ def info(before, after):
     if inf.startswith('[0m# '):
         inf = inf.split('\r')[-1].strip()
 
-    # if inf.startswith("[0;94m[bluetooth]") : return
-    # logging.info("info: " + inf )
+    if inf.endswith("Connected: yes") or inf.endswith("Connected: no"):
+        mac = inf.split(' ')[-3]
+        inf = inf.replace(mac, lookupdevice(mac))
+
+    if inf.startswith("[NEW]"):
+        inf = ' '.join(inf.split(' ')[0:2]) + ' ' + ' '.join(inf.split(' ')[3:])
+        inf = inf + " hi there how are you?"
+        c = 'echo "' + inf + '" | festival --tts &'
+        os.system(c)
+        print c
+
     print "LOG:",
     pprint(inf)
 
@@ -81,8 +90,9 @@ def lookupdevice(mac = 'BE:E9:46:65:72:47'):
         e = e.strip()
         if e.startswith("Name"):
             return e.split(': ')[1]
+    return mac
 
-print lookupdevice()
+
 while True:
     try:
         type = child.expect([".*\):", "\[.*\]", prompt] , timeout=1)
@@ -93,5 +103,5 @@ while True:
 
 
     except pexpect.exceptions.TIMEOUT,e:
-        child.flush()
+        #child.flush()
         pass
