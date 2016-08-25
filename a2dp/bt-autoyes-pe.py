@@ -3,7 +3,7 @@
 from pprint import pprint
 from time import sleep
 import sys, os, logging, re
-import pexpect
+import pexpect      # sudo pip install pexpect
 logging.basicConfig(format='%(levelname)s:%(message)s',  level=logging.DEBUG)
 
 
@@ -54,6 +54,9 @@ def question(before, after):
         passkey = after.split(' ')[-2]
         logging.info("confirming passkey " + passkey)
         child.send("yes\r")
+        c = 'echo "hereby i confirm the pass key ' + passkey + '" | festival --tts &'
+        os.system(c)
+        print c
 
     elif after.find("Authorize service") > 0:  # connecting
         logging.info("Authorizing Service")
@@ -71,6 +74,9 @@ def info(before, after):
     if inf.endswith("Connected: yes") or inf.endswith("Connected: no"):
         mac = inf.split(' ')[-3]
         inf = inf.replace(mac, lookupdevice(mac))
+        c = './restart-pulseaudio.sh "' + inf.replace("[CHG] ", '') + '"'
+        print c
+        os.system(c)
 
     if inf.startswith("[NEW]"):
         inf = ' '.join(inf.split(' ')[0:2]) + ' ' + ' '.join(inf.split(' ')[3:])
@@ -79,8 +85,8 @@ def info(before, after):
         os.system(c)
         print c
 
-    print "LOG:",
-    pprint(inf)
+    logging.info("notice: " + inf )
+
 
 
 def lookupdevice(mac = 'BE:E9:46:65:72:47'):

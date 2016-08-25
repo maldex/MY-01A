@@ -11,6 +11,7 @@ Thanks to the folks over at 'HHD Software' for the 'Free Serial Port Monitor' wh
 requires python (2.7isch) and pySerial.
 
 ## todo
+- figure how to read powerstate
 - figure how to read backlight
 - Automatic Power Off (APO) - won't do as it's useless
 - setting a password
