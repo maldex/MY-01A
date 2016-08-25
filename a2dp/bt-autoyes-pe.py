@@ -111,7 +111,7 @@ def lookupdevice(mac = 'BE:E9:46:65:72:47'):
 
 while True:
     try:
-        type = child.expect([".*\):", "\[.*\]", prompt] , timeout=3)
+        type = child.expect([".*\):", "\[.*\]", prompt, "Agent unregistered"] , timeout=3)
         b = color_remover.sub('', child.before).strip().replace("[K",'').replace("\ro",'')
         a = color_remover.sub('', child.after).strip().replace("[K",'').replace("\ro",'')
         if type == 0:
@@ -123,5 +123,6 @@ while True:
     except pexpect.exceptions.TIMEOUT:
         child.flush()
         child.send("version\r")
+        child.expect("Version")
         child.expect(prompt)
         pass
