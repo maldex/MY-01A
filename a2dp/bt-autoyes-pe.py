@@ -17,7 +17,7 @@ prompt =   "\\x1b\[0;94m\[bluetooth\]\\x1b\[0m# "
 # prompt = "\\x1b[0;94m"
 
 btctl = 'bluetoothctl'
-
+btctl = "ssh pi@10.83.6.129 " + btctl
 child = pexpect.spawn(btctl, echo=True)
 # child.logfile = sys.stdout
 
@@ -81,11 +81,12 @@ def info(before, after):
         device = lookupdevice(mac)
         inf = inf.replace(mac, device)
         if inf.endswith("Connected: yes"): say = "device " + device + " is now connected!"
-        if inf.endswith("Connected: no"):  say = "device " + device + " disconnected!"
+        if inf.endswith("Connected: no"):  say = "device " + device + " has been lost!"
 
         c = './restart-pulseaudio.sh "' + say + '"'
         print c
         os.system(c)
+        sleep(0.5)
 
     if inf.startswith("[NEW]"):
         inf = ' '.join(inf.split(' ')[0:2]) + ' ' + ' '.join(inf.split(' ')[3:])
