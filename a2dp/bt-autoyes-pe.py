@@ -51,6 +51,7 @@ logging.info("starting listener loop")
 # [agent] Authorize service 0000110d-0000-1000-8000-00805f9b34fb (yes/no):
 
 def question(before, after):
+
     if after.find("Confirm passkey") > 0:  # pairing
         passkey = after.split(' ')[-2]
         logging.info("confirming passkey " + passkey)
@@ -111,8 +112,8 @@ def lookupdevice(mac = 'BE:E9:46:65:72:47'):
 while True:
     try:
         type = child.expect([".*\):", "\[.*\]", prompt] , timeout=3)
-        b = color_remover.sub('', child.before).strip()
-        a = color_remover.sub('', child.after).strip()
+        b = color_remover.sub('', child.before).strip().replace("[K",'').replace("\ro",'')
+        a = color_remover.sub('', child.after).strip().replace("[K",'').replace("\ro",'')
         if type == 0:
             question(b,a)
         elif type == 1:
