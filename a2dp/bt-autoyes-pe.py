@@ -51,7 +51,6 @@ logging.info("starting listener loop")
 # [agent] Authorize service 0000110d-0000-1000-8000-00805f9b34fb (yes/no):
 
 def question(before, after):
-    after = after.strip()
     if after.find("Confirm passkey") > 0:  # pairing
         passkey = after.split(' ')[-2]
         logging.info("confirming passkey " + passkey)
@@ -60,8 +59,8 @@ def question(before, after):
         os.system(c)
         print c
 
-    elif after.find("Authorize service") > 0 :  # connecting
-        logging.info("Authorizing Service    - - - - - -")
+    elif after.startswith("Authorize service") or after.endswith('(yes/no):'):  # connecting
+        logging.info("Authorizing Service")
         child.send("yes\r")
 
     else:
@@ -111,13 +110,17 @@ def lookupdevice(mac = 'BE:E9:46:65:72:47'):
 
 while True:
     try:
-        type = child.expect([".*\):", "\[.*\]", prompt] , timeout=1)
+        type = child.expect([".*\):", "\[.*\]", prompt] , timeout=3)
+        b = color_remover.sub('', child.before).strip()
+        a = color_remover.sub('', child.after).strip()
         if type == 0:
-            question(child.before, child.after)
+            question(b,a)
         elif type == 1:
-            info(child.before, child.after)
+            info(b,a)
 
 
     except pexpect.exceptions.TIMEOUT:
         child.flush()
+        child.send("version\r")
+        child.expect(prompt)
         pass
