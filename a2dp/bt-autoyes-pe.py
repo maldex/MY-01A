@@ -54,7 +54,7 @@ def question(before, after):
         passkey = after.split(' ')[-2]
         logging.info("confirming passkey " + passkey)
         child.send("yes\r")
-        c = 'echo "hereby i confirm the pass key ' + passkey + '" | festival --tts &'
+        c = 'echo "i hereby confirm the pass key ' + passkey + '" | festival --tts &'
         os.system(c)
         print c
 
@@ -73,8 +73,12 @@ def info(before, after):
 
     if inf.endswith("Connected: yes") or inf.endswith("Connected: no"):
         mac = inf.split(' ')[-3]
-        inf = inf.replace(mac, lookupdevice(mac))
-        c = './restart-pulseaudio.sh "' + inf.replace("[CHG] ", '') + '"'
+        device = lookupdevice(mac)
+        inf = inf.replace(mac, device)
+        if inf.endswith("Connected: yes"): say = "device " + device + " is now connected!"
+        if inf.endswith("Connected: no"):  say = "device " + device + " disconnected!"
+
+        c = './restart-pulseaudio.sh "' + say + '"'
         print c
         os.system(c)
 

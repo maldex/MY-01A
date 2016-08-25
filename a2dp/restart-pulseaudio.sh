@@ -18,4 +18,4 @@ text="hi, this is PulsAdio running on `hostname` at `hostname -I`."
 if [ "$@" != "" ]; then
 	text="$@"
 	fi
-echo "${text}" | festival --tts
+echo "${text}" | festival --tts &
