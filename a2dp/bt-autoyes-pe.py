@@ -17,8 +17,10 @@ prompt =   "\\x1b\[0;94m\[bluetooth\]\\x1b\[0m# "
 # prompt = "\\x1b[0;94m"
 
 btctl = 'bluetoothctl'
-btctl = "ssh pi@10.83.6.129 " + btctl
-child = pexpect.spawn(btctl, echo=True)
+cmdpref = ''
+# cmdpref = "ssh pi@10.83.6.129 "
+# cmdpref = "ssh pi@192.168.122.219 "
+child = pexpect.spawn(cmdpref + btctl, echo=True)
 # child.logfile = sys.stdout
 
 
@@ -64,6 +66,7 @@ def question(before, after):
         logging.info("Authorizing Service")
         child.send("yes\r")
 
+
     else:
         logging.warn("could not decipper - sending yes anyway")
         pprint(before)
@@ -80,18 +83,23 @@ def info(before, after):
         mac = inf.split(' ')[-3]
         device = lookupdevice(mac)
         inf = inf.replace(mac, device)
-        if inf.endswith("Connected: yes"): say = "device " + device + " is now connected!"
-        if inf.endswith("Connected: no"):  say = "device " + device + " has been lost!"
+        if inf.endswith("Connected: yes"):
+            say = "device " + device + " is now connected!"
+            c = 'echo "' + say + '" | festival --tts &'
+            print "------",c
+            os.system(c)
 
-        c = './restart-pulseaudio.sh "' + say + '"'
-        print c
-        os.system(c)
-        sleep(0.5)
+        if inf.endswith("Connected: no"):
+            say = "device " + device + " has been lost!"
+            c = cmdpref + '/home/pi/MY-01A/a2dp/restart-pulseaudio.sh \'' + say + '\' &'
+            print c
+            os.system(c)
+
 
     if inf.startswith("[NEW]"):
         inf = ' '.join(inf.split(' ')[0:2]) + ' ' + ' '.join(inf.split(' ')[3:])
         inf = inf + " hi there how are you?"
-        c = 'echo "' + inf + '" | festival --tts &'
+        c =  cmdpref + 'echo "' + inf + '" | festival --tts &'
         os.system(c)
         print c
 
@@ -109,6 +117,10 @@ def lookupdevice(mac = 'BE:E9:46:65:72:47'):
     return mac
 
 
+c = cmdpref + '/home/pi/MY-01A/a2dp/restart-pulseaudio.sh \'restarting \''
+print c
+os.system(c)
+
 while True:
     try:
         type = child.expect([".*\):", "\[.*\]", prompt, "Agent unregistered"] , timeout=3)
@@ -121,8 +133,9 @@ while True:
 
 
     except pexpect.exceptions.TIMEOUT:
-        child.flush()
-        child.send("version\r")
-        child.expect("Version")
-        child.expect(prompt)
+        # child.flush()
+        # child.send("version\r")
+        # child.expect("Version")
+        # child.expect(prompt)
+        # print child.before
         pass

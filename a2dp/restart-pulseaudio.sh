@@ -15,7 +15,7 @@ if [ "${pid}" != "" ]; then
 ${pulsecmd}
 
 text="hi, this is PulsAdio running on `hostname` at `hostname -I`."
-if [ "$@" != "" ]; then
+if [ ! -z "$@" ]; then
 	text="$@"
 	fi
 echo "${text}" | festival --tts &
