@@ -68,7 +68,6 @@ class myBluetoothCtlCli(threading.Thread):
                 logging.info("answering yes to pairing request with passkey " + passkey)
                 self.write('yes')
                 c = command_prefix + '' + pulse_audio + ' \"confirming ' + ' '.join(passkey[-2:]) + '\" &'
-                print c
                 os.system(c)
 
 
@@ -90,10 +89,9 @@ class myBluetoothCtlCli(threading.Thread):
                     self.write('untrust ' + mac)
                     self.write('remove ' + mac)
                     if mac == self.current_device:
-                        c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + '\" &'
-                        # c = command_prefix + 'echo \"lost ' + self.devices[mac] + '\" | ' + command_prefix +'"festival --tts"'
+                        c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + ', switching to radio\" &'
                         os.system(c)
-                        os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 &')
+                        os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 > /dev/null 2>&1  &')
                 else:
                     pass
                     # logging.debug("unknown [CHG]: '" + str(msg)  + "'")
