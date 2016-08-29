@@ -14,7 +14,7 @@ if [ "${pid}" != "" ]; then
 
 ${pulsecmd}
 
-text="hi, this is PulsAudio running on `hostname` at `hostname -I`."
+text="hi, this is PulsAudio running on `hostname` at `hostname -I`.       Service Ready!"
 if [ ! -z "$1" ]; then
 	text="$@"
 	fi
