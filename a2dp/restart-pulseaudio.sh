@@ -8,7 +8,6 @@ if [ "`whoami`" != "${runasuser}" ]; then
 	fi
 
 pid=`ps -x -o pid,cmd | grep "${pulsecmd}" | grep -v grep | awk '{print $1}'`
-echo ${pid}
 if [ "${pid}" != "" ]; then
 	kill ${pid}
 	fi
