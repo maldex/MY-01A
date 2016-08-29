@@ -89,9 +89,10 @@ class myBluetoothCtlCli(threading.Thread):
                     self.write('untrust ' + mac)
                     self.write('remove ' + mac)
                     if mac == self.current_device:
-                        c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + ', switching to radio\" &'
+                        c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + '\" &'
                         os.system(c)
-                        os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 > /dev/null 2>&1  &')
+                        # sleep(1)
+                        # os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 > /dev/null 2>&1  &')
                 else:
                     pass
                     # logging.debug("unknown [CHG]: '" + str(msg)  + "'")
@@ -120,8 +121,10 @@ class myBluetoothCtlCli(threading.Thread):
 
 
 if __name__ == "__main__":
+    c = command_prefix + '' + pulse_audio + ''
+    os.system(c)
+
     myInstance = myBluetoothCtlCli(command_prefix + 'bluetoothctl')
     myInstance.start()
-
     myInstance.process()
 
