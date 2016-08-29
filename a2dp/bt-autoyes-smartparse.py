@@ -11,7 +11,7 @@ color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 
 from pprint import pprint
 command_prefix = ''
-# command_prefix = "ssh pi@10.83.6.129 "
+command_prefix = "ssh pi@10.83.6.129 "
 pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
 
 class myBluetoothCtlCli (threading.Thread):
@@ -33,10 +33,11 @@ class myBluetoothCtlCli (threading.Thread):
         self.initialize_agent()
         while True:
             out = ''
-            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r'):
+            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r') and not out.endswith('\n'):
                 out += self.proc.stdout.read(1)
                 # print "->",; pprint( out )
             out = color_remover.sub('', out).strip()   # .replace("\ro",'')
+            if out == '': continue
             self.stdout_queue.put(out)
         print "Exiting "
 
