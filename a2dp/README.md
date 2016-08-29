@@ -1,6 +1,13 @@
-# raspberry pi as bluetooth speaker
+# raspberry pi as bluetooth speaker - headless paring
 
+- follow this guide to setup your linux as A2DP Sink (Loudspeaker)
 http://raspberrypi.stackexchange.com/questions/47708/setup-raspberry-pi-3-as-bluetooth-speaker
+- make sure the following is installed?  mpg321
+- use 'bt-autopair.py' for headless automatic bluetooth pairing
+
+## caveat
+- pulseaudio has prooven to be quite unstable when alternaing inputsources, hence i restart it like all the times.
+- pairing is being removed after disconnect: as pairing takes time, this time is used for restarting pulseadio
 
 ## /etc/rc.local
 ```
@@ -13,7 +20,7 @@ echo "20" > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
 if [ -e /dev/ttyUSB0 ]; then
         su - pi -c "~/MY-01A/MY-01A.py --power on --stereo on --freq 87.6 --txpower 15 --linevol 24 --micvol 0"
         fi
-su - pi -c "~/MY-01A/a2dp/bt-autopair.py " | tee /var/log/autoyes.log &
+su - pi -c "~/MY-01A/a2dp/bt-autopair.py" 2>&1 | tee /var/log/autoyes.log &
 
 # say something
 #echo "hi, this is `hostname` at `hostname -I`." | festival --tts

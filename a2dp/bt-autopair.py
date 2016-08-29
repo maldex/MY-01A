@@ -1,16 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import threading, Queue
-
-import os, sys, logging, subprocess, re
+import os, sys, logging, subprocess, re, threading, Queue
 from time import sleep
 
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
 
 color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
-
-from pprint import pprint
 
 command_prefix = ''
 pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
@@ -25,7 +21,6 @@ class myBluetoothCtlCli(threading.Thread):
         self.proc = subprocess.Popen(command.split(' '), shell=False,
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
-
         self.devices = {}
         self.controllers = {}
         self.current_device = '00:00:00:00:00:00'
@@ -35,8 +30,7 @@ class myBluetoothCtlCli(threading.Thread):
         self.initialize_agent()
         while True:
             out = ''
-            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith(
-                    '\r') and not out.endswith('\n'):
+            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r') and not out.endswith('\n'):
                 out += self.proc.stdout.read(1)
                 # print "->",; pprint( out )
             out = color_remover.sub('', out).strip().replace("\r", '')
@@ -56,8 +50,7 @@ class myBluetoothCtlCli(threading.Thread):
 
     def process(self):
         while True:
-            msg = myInstance.read()
-            # print "msg:",;pprint(msg)
+            msg = myInstance.read() # block here until process produced something new
             if msg == '[bluetooth]#':
                 continue  # cli ready
 
@@ -126,4 +119,3 @@ if __name__ == "__main__":
     myInstance = myBluetoothCtlCli(command_prefix + 'bluetoothctl')
     myInstance.start()
     myInstance.process()
-
