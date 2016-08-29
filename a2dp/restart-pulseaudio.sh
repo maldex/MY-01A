@@ -7,6 +7,7 @@ if [ "`whoami`" != "${runasuser}" ]; then
 	exit $?
 	fi
 
+killall mpg321 2>/dev/null
 pid=`ps -x -o pid,cmd | grep "${pulsecmd}" | grep -v grep | awk '{print $1}'`
 if [ "${pid}" != "" ]; then
 	kill ${pid}
@@ -14,7 +15,7 @@ if [ "${pid}" != "" ]; then
 
 ${pulsecmd}
 
-text="hi, this is PulsAudio running on `hostname` at `hostname -I`.       Service Ready!"
+text="hi, this`hostname` at `hostname -I`"
 if [ ! -z "$1" ]; then
 	text="$@"
 	fi

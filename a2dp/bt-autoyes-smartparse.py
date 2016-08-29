@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# http://radio.netstream.ch/planet105_256k_mp3
-
 import threading, Queue
 
 import os, sys, logging, subprocess, re
@@ -16,7 +14,7 @@ from pprint import pprint
 
 command_prefix = ''
 pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
-
+play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105_256k_mp3 2> /dev/null &'
 
 class myBluetoothCtlCli(threading.Thread):
     def __init__(self, command):
@@ -91,8 +89,8 @@ class myBluetoothCtlCli(threading.Thread):
                     if mac == self.current_device:
                         c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + '\" &'
                         os.system(c)
-                        # sleep(1)
-                        # os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 > /dev/null 2>&1  &')
+                        sleep(3)
+                        os.system(play_radio)
                 else:
                     pass
                     # logging.debug("unknown [CHG]: '" + str(msg)  + "'")
@@ -123,6 +121,7 @@ class myBluetoothCtlCli(threading.Thread):
 if __name__ == "__main__":
     c = command_prefix + '' + pulse_audio + ''
     os.system(c)
+    os.system(play_radio)
 
     myInstance = myBluetoothCtlCli(command_prefix + 'bluetoothctl')
     myInstance.start()
