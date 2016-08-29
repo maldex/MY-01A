@@ -1,6 +1,6 @@
 #!/bin/bash
 pulsecmd="pulseaudio -D --log-target=syslog"
-runasuser="pi"
+runasuser=`whoami` #"pi"
 
 if [ "`whoami`" != "${runasuser}" ]; then
 	sudo su - ${runasuser} -c "$0 \"$@\""
@@ -8,14 +8,15 @@ if [ "`whoami`" != "${runasuser}" ]; then
 	fi
 
 pid=`ps -x -o pid,cmd | grep "${pulsecmd}" | grep -v grep | awk '{print $1}'`
+echo ${pid}
 if [ "${pid}" != "" ]; then
 	kill ${pid}
 	fi
 
 ${pulsecmd}
 
-text="hi, this is PulsAdio running on `hostname` at `hostname -I`."
-if [ ! -z "$@" ]; then
+text="hi, this is PulsAudio running on `hostname` at `hostname -I`."
+if [ ! -z "$1" ]; then
 	text="$@"
 	fi
 echo "${text}" | festival --tts &

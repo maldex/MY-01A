@@ -11,7 +11,7 @@ color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 
 from pprint import pprint
 command_prefix = ''
-# command_prefix = "ssh pi@10.83.6.129 "
+command_prefix = "ssh pi@10.83.6.129 "
 
 
 class myBluetoothCtlCli (threading.Thread):
@@ -26,6 +26,7 @@ class myBluetoothCtlCli (threading.Thread):
 
         self.devices = {}
         self.controllers = {}
+        self.current_device = '00:00:00:00:00:00'
 
     def run(self):   # thread
         logging.debug("starting stdout listener thread")
@@ -61,6 +62,10 @@ class myBluetoothCtlCli (threading.Thread):
                 passkey = msg.split(' ')[3]
                 logging.info("answering yes to pairing request with passkey " + passkey)
                 self.write('yes')
+                c=command_prefix + '"/home/pi/MY-01A/a2dp/restart-pulseaudio.sh \"confirming ' + ' '.join(passkey[-2:]) + '\"" &'
+                print c
+                os.system(c)
+
 
             elif msg.endswith('(yes/no):'):
                 logging.info("accepting unknown yes/no question with yes")
@@ -70,12 +75,21 @@ class myBluetoothCtlCli (threading.Thread):
 
             elif msg.startswith('[CHG]') or msg.startswith('[DEL]'):
                 if msg.endswith('Connected: yes'):
-                    logging.info('conneeeecteeed: '+ self.devices[mac])
-                    # os.system(command_prefix + './restart-pulseaudio.sh')
+                    mac = msg.split(' ')[2]
+                    logging.info('connected device:: ' + mac + " - " + self.devices[mac])
+                    self.current_device = mac
+                    # print self.current_device
+
                 elif msg.endswith('Connected: no'):
                     mac = msg.split(' ')[2]
-                    logging.info('looooossssstttt: ' + msg)
                     self.write('remove ' + mac)
+                    logging.info('lost device: ' + mac + " - " + self.devices[mac])
+                    # print self.current_device
+                    # if mac == self.current_device:
+                    #     c = command_prefix + '"/home/pi/MY-01A/a2dp/restart-pulseaudio.sh \"lost ' + self.devices[mac] + '\""'
+                    #     # c = command_prefix + 'echo \"lost ' + self.devices[mac] + '\" | ' + command_prefix +'"festival --tts"'
+                    #     print c
+                    #     os.system(c)
                 else:
                     pass
 
@@ -91,6 +105,7 @@ class myBluetoothCtlCli (threading.Thread):
 
             else:
                 logging.debug("could not parse: '" + str(msg)  + "'")
+                pass
 
 
 if __name__ == "__main__":
