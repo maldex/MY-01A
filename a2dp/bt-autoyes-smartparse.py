@@ -36,7 +36,7 @@ class myBluetoothCtlCli (threading.Thread):
             while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r') and not out.endswith('\n'):
                 out += self.proc.stdout.read(1)
                 # print "->",; pprint( out )
-            out = color_remover.sub('', out).strip()   # .replace("\ro",'')
+            out = color_remover.sub('', out).strip().replace("\ro",'')
             if out == '': continue
             self.stdout_queue.put(out)
         print "Exiting "
@@ -63,7 +63,7 @@ class myBluetoothCtlCli (threading.Thread):
                 passkey = msg.split(' ')[3]
                 logging.info("answering yes to pairing request with passkey " + passkey)
                 self.write('yes')
-                c=command_prefix + '"' + pulse_audio + ' \"confirming ' + ' '.join(passkey[-2:]) + '\"" &'
+                c=command_prefix + '' + pulse_audio + ' \"confirming ' + ' '.join(passkey[-2:]) + '\" &'
                 print c
                 os.system(c)
 
