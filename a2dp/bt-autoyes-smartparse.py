@@ -33,7 +33,7 @@ class myBluetoothCtlCli (threading.Thread):
         self.initialize_agent()
         while True:
             out = ''
-            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith(os.linesep):
+            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r'):
                 out += self.proc.stdout.read(1)
                 # print "->",; pprint( out )
             out = color_remover.sub('', out).strip()   # .replace("\ro",'')
@@ -43,10 +43,10 @@ class myBluetoothCtlCli (threading.Thread):
     def initialize_agent(self):
         for start_cmd in ['agent on', 'discoverable on', 'pairable on', 'power on', 'default-agent']:
             self.write(start_cmd + '\r')
-            sleep(0.25)
 
     def write(self, c):
         self.proc.stdin.write(c + '\r')
+        sleep(0.25)
 
     def read(self):
         return self.stdout_queue.get()
