@@ -44,7 +44,6 @@ class myBluetoothCtlCli(threading.Thread):
             out = color_remover.sub('', out).strip().replace("\r", '')
             if out == '': continue
             self.stdout_queue.put(out)
-        print "Exiting "
 
     def initialize_agent(self):
         for start_cmd in ['agent on', 'discoverable on', 'pairable on', 'power on', 'default-agent']:
@@ -52,7 +51,7 @@ class myBluetoothCtlCli(threading.Thread):
 
     def write(self, c):
         self.proc.stdin.write(c + '\r')
-        sleep(0.25)
+        sleep(0.2)
 
     def read(self):
         return self.stdout_queue.get()
@@ -93,8 +92,8 @@ class myBluetoothCtlCli(threading.Thread):
                     if mac == self.current_device:
                         c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + '\" &'
                         # c = command_prefix + 'echo \"lost ' + self.devices[mac] + '\" | ' + command_prefix +'"festival --tts"'
-                        print c
                         os.system(c)
+                        os.system('mpg321 http://radio.netstream.ch/planet105_256k_mp3 &')
                 else:
                     pass
                     # logging.debug("unknown [CHG]: '" + str(msg)  + "'")
