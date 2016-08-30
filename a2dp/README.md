@@ -2,7 +2,7 @@
 
 - follow this guide to setup your linux as A2DP Sink (Loudspeaker)
 http://raspberrypi.stackexchange.com/questions/47708/setup-raspberry-pi-3-as-bluetooth-speaker
-- make sure the following is installed?  mpg321
+- make sure the following is installed:?  mpg321
 - use 'bt-autopair.py' for headless automatic bluetooth pairing
 
 ## caveat

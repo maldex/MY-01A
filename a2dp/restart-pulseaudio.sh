@@ -7,7 +7,8 @@ if [ "`whoami`" != "${runasuser}" ]; then
 	exit $?
 	fi
 
-killall mpg321 2>/dev/null
+killall mpg321 2>/dev/null && echo "mpg321 terminated"
+
 pid=`ps -x -o pid,cmd | grep "${pulsecmd}" | grep -v grep | awk '{print $1}'`
 if [ "${pid}" != "" ]; then
 	kill ${pid}

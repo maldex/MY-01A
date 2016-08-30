@@ -10,6 +10,8 @@ color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
 
 command_prefix = ''
 pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
+
+
 play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105_256k_mp3 2> /dev/null &'
 
 class myBluetoothCtlCli(threading.Thread):
