@@ -4,22 +4,23 @@
 import os, sys, logging, subprocess, re, threading, Queue
 from time import sleep
 
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105_256k_mp3 2> /dev/null &'
+play_radio = "echo hallo "
+pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
+command_prefix = ''
 
 color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
-command_prefix = ''
-pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
+blacklist = ['00:00:00:00:00:00',
+             'BE:E9:46:65:72:48']
 
-
-play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105_256k_mp3 2> /dev/null &'
 
 class myBluetoothCtlCli(threading.Thread):
     def __init__(self, command):
         threading.Thread.__init__(self)
         self.daemon = True
         self.stdout_queue = Queue.Queue()
-
         self.proc = subprocess.Popen(command.split(' '), shell=False,
                                      stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                      stderr=subprocess.STDOUT)
@@ -32,10 +33,13 @@ class myBluetoothCtlCli(threading.Thread):
         self.initialize_agent()
         while True:
             out = ''
-            while not out.endswith('#') and not out.endswith('(yes/no):') and not out.endswith('\r') and not out.endswith('\n'):
+            while not out.endswith('# ') and not out.endswith('o): ') and not out.endswith(
+                    '\n'):  # and not out.endswith('\r'):
                 out += self.proc.stdout.read(1)
+                # from pprint import pprint
                 # print "->",; pprint( out )
-            out = color_remover.sub('', out).strip().replace("\r", '')
+            out = color_remover.sub('', out).strip()  # .replace('\ro','')
+            out = out.strip()
             if out == '': continue
             self.stdout_queue.put(out)
 
@@ -52,22 +56,29 @@ class myBluetoothCtlCli(threading.Thread):
 
     def process(self):
         while True:
-            msg = myInstance.read() # block here until process produced something new
+            msg = myInstance.read()  # block here until process produced something new
+            # from pprint import pprint
+            # pprint(msg)
+
             if msg == '[bluetooth]#':
                 continue  # cli ready
 
-            elif msg.startswith('[agent]'):  # i guess pairing rewuest?
+            elif msg.startswith('[agent] Confirm passkey'):  # i guess pairing rewuest?
                 passkey = msg.split(' ')[3]
                 logging.info("answering yes to pairing request with passkey " + passkey)
                 self.write('yes')
                 c = command_prefix + '' + pulse_audio + ' \"confirming ' + ' '.join(passkey[-2:]) + '\" &'
                 os.system(c)
 
-
-            elif msg.endswith('(yes/no):'):
-                logging.info("accepting unknown yes/no question with yes")
+            elif msg.startswith('[agent] Authorize service'):
+                logging.info("answering yes to service request")
                 self.write('yes')
+                # c = command_prefix + '' + pulse_audio + ' \"unthrusted\" &'
+                # os.system(c)
 
+            elif msg.endswith('o):'):
+                logging.info("answering yes to unknown yes/no question with yes")
+                self.write('yes')
 
 
             elif msg.startswith('[CHG]'):
@@ -98,20 +109,23 @@ class myBluetoothCtlCli(threading.Thread):
                 mac = msg.split(' ')[2]
                 name = ' '.join(msg.split(' ')[3:])
                 self.controllers[mac] = name
-                logging.info("added new controller " + mac + " (" + name + ")")
+                logging.info("added new controller " + mac + " (" + name + ") - " + msg)
 
             elif msg.startswith('[NEW] Device'):
                 mac = msg.split(' ')[2]
                 name = ' '.join(msg.split(' ')[3:])
                 self.devices[mac] = name
-                logging.info("added new device " + mac + " (" + name + "), trusting")
-                self.write('trust ' + mac)
-                self.current_device = mac
+                if mac in blacklist:
+                    logging.warning("blacklisted device! blocking " + mac + " (" + name + ")")
+                    self.write('block ' + mac)
+                else:
+                    logging.info("added new device " + mac + " (" + name + "), trusting")
+                    self.write('trust ' + mac)
+                    self.current_device = mac
 
             else:
-                logging.debug("could not parse: '" + str(msg) + "'")
+                # if not msg.startswith('00001'): logging.debug("could not parse: '" + str(msg) + "'")
                 pass
-
 
 if __name__ == "__main__":
     c = command_prefix + '' + pulse_audio + ''
