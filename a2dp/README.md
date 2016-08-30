@@ -20,8 +20,7 @@ echo "20" > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
 if [ -e /dev/ttyUSB0 ]; then
         su - pi -c "~/MY-01A/MY-01A.py --power on --stereo on --freq 87.6 --txpower 15 --linevol 24 --micvol 0"
         fi
-su - pi -c "~/MY-01A/a2dp/bt-autopair.py" 2>&1 | tee /var/log/autoyes.log &
+find /var/log -iname "bt-autopair-*.log" -mtime +7 -exec rm {} \;
+su - pi -c "~/MY-01A/a2dp/bt-autopair.py" 2>&1 | tee -a /var/log/bt-autopair-`date +%Y%m%d-%H%M`.log &
 
-# say something
-#echo "hi, this is `hostname` at `hostname -I`." | festival --tts
 ```

@@ -4,8 +4,8 @@
 import os, sys, logging, subprocess, re, threading, Queue
 from time import sleep
 
-play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105_256k_mp3 2> /dev/null &'
-play_radio = "echo hallo "
+play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105club_192k_mp3  &'
+#play_radio = "echo hallo "
 pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
 command_prefix = ''
 
@@ -14,7 +14,6 @@ logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.DEBUG)
 
 blacklist = ['00:00:00:00:00:00',
              'BE:E9:46:65:72:48']
-
 
 class myBluetoothCtlCli(threading.Thread):
     def __init__(self, command):
@@ -73,8 +72,6 @@ class myBluetoothCtlCli(threading.Thread):
             elif msg.startswith('[agent] Authorize service'):
                 logging.info("answering yes to service request")
                 self.write('yes')
-                # c = command_prefix + '' + pulse_audio + ' \"unthrusted\" &'
-                # os.system(c)
 
             elif msg.endswith('o):'):
                 logging.info("answering yes to unknown yes/no question with yes")
