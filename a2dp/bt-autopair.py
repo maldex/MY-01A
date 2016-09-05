@@ -4,9 +4,12 @@
 import os, sys, logging, subprocess, re, threading, Queue
 from time import sleep
 
-play_radio = 'mpg321 -q -l 0 http://radio.netstream.ch/planet105club_192k_mp3  &'
-#play_radio = "echo hallo "
-pulse_audio = "~/MY-01A/a2dp/restart-pulseaudio.sh"
+url="http://radio.netstream.ch/planet105club_192k_mp3"
+#url="http://radio.netstream.ch/planet105_256k_mp3"
+
+radio = "mpg321 -q -l 0 "+url+" &"
+radio = "./rc.idlestream.sh restart &"
+pulse_audio = "./rc.pulseaudio.sh restart &"
 command_prefix = ''
 
 color_remover = re.compile('(\x9B|\x1B\[)[0-?]*[ -\/]*[@-~]')
@@ -66,12 +69,12 @@ class myBluetoothCtlCli(threading.Thread):
                 passkey = msg.split(' ')[3]
                 logging.info("answering yes to pairing request with passkey " + passkey)
                 self.write('yes')
-                c = command_prefix + '' + pulse_audio + ' \"confirming ' + ' '.join(passkey[-2:]) + '\" &'
-                os.system(c)
-
+                restart_pulse('confirming ' + ' '.join(passkey[-2:]) + '')
+				
             elif msg.startswith('[agent] Authorize service'):
                 logging.info("answering yes to service request")
                 self.write('yes')
+
 
             elif msg.endswith('o):'):
                 logging.info("answering yes to unknown yes/no question with yes")
@@ -90,10 +93,7 @@ class myBluetoothCtlCli(threading.Thread):
                     self.write('untrust ' + mac)
                     self.write('remove ' + mac)
                     if mac == self.current_device:
-                        c = command_prefix + '' + pulse_audio + ' \"lost ' + self.devices[mac] + '\" &'
-                        os.system(c)
-                        sleep(3)
-                        os.system(play_radio)
+                        restart_pulse('lost ' + self.devices[mac] + '', play_radio=True)
                 else:
                     pass
                     # logging.debug("unknown [CHG]: '" + str(msg)  + "'")
@@ -123,11 +123,28 @@ class myBluetoothCtlCli(threading.Thread):
             else:
                 # if not msg.startswith('00001'): logging.debug("could not parse: '" + str(msg) + "'")
                 pass
+				
+def restart_pulse(text=None, play_radio=False):
+    if text is not None:
+        with open('/tmp/welcome.txt','w') as f:
+            f.write(text)
+        #os.system('cat /tmp/welcome.txt | text2wave  -o /tmp/welcome.wav')
+        #os.system('aplay /tmp/welcome.wav')
+    logging.info("restarting pulseaudio " + str(text))
+    os.system('killall mpg321')
+    os.system(pulse_audio)  #(pulse_audio)
+    if play_radio:
+        #sleep(1)
+        os.system(radio)
 
+		
+		
 if __name__ == "__main__":
-    c = command_prefix + '' + pulse_audio + ''
-    os.system(c)
-    os.system(play_radio)
+    #os.system('echo "hi, this is `hostname` at `hostname -I`." > /tmp/welcome.txt')
+    #os.system('echo "hi, this is `hostname`." > /tmp/welcome.txt')
+    #os.system('killall pulseaudio mpg321 aplay')
+    restart_pulse("hi, this is the bluetooth auto answering machine", play_radio=True)
+    
 
     myInstance = myBluetoothCtlCli(command_prefix + 'bluetoothctl')
     myInstance.start()
