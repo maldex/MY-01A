@@ -134,8 +134,8 @@ function opmode_status() {
 		rc_comment "no process found"
 		rc_status 2; return 2
 		fi
-	rc_comment "PID ${pids}"
 	for pid in ${pids}; do	getProcessInfo ${pid} ; done
+	rc_comment "PID ${pids}"
 	rc_status 0; return 0
 }
 	
