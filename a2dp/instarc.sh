@@ -129,12 +129,12 @@ function opmode_stop() {
 
 function opmode_status() {
 	pids=`getPids $1`
+	for pid in ${pids}; do	getProcessInfo ${pid} ; done
 	rc_comment "Status '$1': "
 	if [ "${pids}" = "" ]; then
 		rc_comment "no process found"
 		rc_status 2; return 2
 		fi
-	for pid in ${pids}; do	getProcessInfo ${pid} ; done
 	rc_comment "PID ${pids}"
 	rc_status 0; return 0
 }
