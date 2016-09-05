@@ -65,7 +65,7 @@ function getPids() {
         grep -lZ "_INSTARC=$1 " /proc/[0-9]*/environ 2>/dev/null | tr '\000' '\n' | cut -d'/' -f3 | sort -r | tr '\n' ' '
 }
 function getProcessInfo() {
-        echo "PID: $1 CMD: `cat /proc/$1/cmdline`"
+        echo "PID: $1 CMD: `cat /proc/$1/cmdline | tr '\000' ' '`"
 }
 
 function opmode_start() {
