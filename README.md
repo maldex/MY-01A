@@ -8,7 +8,8 @@ Usermanual: http://www.108mhz.com/download/SDA-01A%20User%20Manual.pdf
 Thanks to the folks over at 'HHD Software' for the 'Free Serial Port Monitor' which allowed me to sniff serial communication on Windows.
 
 ## requirements
-requires python (2.7isch) and pySerial.
+requires python (2.7isch) and pySerial. (pip install pyserial)
+Note for Windows / Python 2.7.xxx.msi installations: pip.exe is in C:\Python27\Scripts
 
 ## todo
 - figure how to read powerstate
