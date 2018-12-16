@@ -144,7 +144,7 @@ def cli_interactive(my01A):  # experimental
     while k.lower() != 'q':
         rep = cli_report(my01A)
         os.system("cls")
-        print rep
+        print(rep)
         print
         # print "Keys:"
         # print "F/f Freq, T/t Transmit, S/s Stereo, L/l Line, M/m Mic"
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     # instanciate object
     try:
         my_01a = SDA01A(options.device)
-    except serial.serialutil.SerialException, e:
+    except serial.serialutil.SerialException as e:
         # mostrly wrong serial device or busy / used by other program
         logging.fatal(str(e))
         exit(255)
@@ -222,5 +222,5 @@ if __name__ == "__main__":
     if options.interactive:
         cli_interactive(my_01a)
 
-    print cli_report(my_01a)
+    print(cli_report(my_01a))
     # finish
